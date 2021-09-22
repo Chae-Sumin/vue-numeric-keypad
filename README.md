@@ -1,6 +1,6 @@
 # Vue Numeric Keypad
 
-The virtual numeric keypad that can be used on Vue. 
+The virtual numeric keypad that can be used on Vue.
 It was produced in NPM v6.14.13 and Vue v2.6.14 environments.
 By default, keys are randomly arranged and you can specify various settings using options.
 
@@ -12,15 +12,15 @@ npm i vue-numeric-keypad
 
 ## Usage
 
-Simple Usage
+### Usage with Module
 ```html
 <template>
 	<div id="app">
-		<input 
-			type="number" 
+		<input
+			type="number"
 			:value="value"
 			@click.stop="show = true"
-			readonly 
+			readonly
 		/>
 		<VueNumericKeypad
 			:value.sync="value"
@@ -58,13 +58,28 @@ export  default {
 </script>
 ```
 
+### Usage with CDN
+```html
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-numeric-keypad@1.0.0/dist/vue-numeric-keypad.min.js"></script>
+<script>
+	Vue.use(VueNumericKeypad);
+    // new Vue({ ... });
+</script>
+...
+<vue-numeric-keypad
+    :value.sync="value"
+    :show.sync="show"
+    :options="options"
+/>
+```
 ## Demo
 
 https://chae-sumin.github.io/vue-numeric-keypad/
 
 ## Props and Options
 
-The props have to deliver changing values or objects, so bind them with `v-bind:` or `:`. 
+The props have to deliver changing values or objects, so bind them with `v-bind:` or `:`.
 In addition, `value` and `show` require two-way binding, so add the `.sync` modifier.
 ### props
 |property|Description|Required|type|
@@ -119,7 +134,7 @@ const  fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
 	gridGap: '5px'
 }
 ```
-`buttonStyles` : 
+`buttonStyles` :
 ```js
 {
 	display: 'flex',
@@ -137,7 +152,7 @@ const  fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
  - You can always keep the value of the show true and adjust the position of the keypad so that the keypad can always be located in a fixed layout.
  - You don't have to always bind the visible value.
  -  If you want to customize a style using css, initialize the style by putting an empty object in the style-related option.
- 
+
 ## License
 [MIT license](https://tldrlegal.com/license/mit-license).
 

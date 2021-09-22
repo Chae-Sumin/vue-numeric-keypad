@@ -7,7 +7,7 @@ By default, keys are randomly arranged and you can specify various settings usin
 ## Installation
 
 ```bash
-npm i VueNumericKeypad
+npm i vue-numeric-keypad
 ```
 
 ## Usage
@@ -31,7 +31,7 @@ Simple Usage
 </template>
 
 <script>
-import  VueNumericKeypad  from "./components/VueNumericKeypad";
+import  VueNumericKeypad  from "vue-numeric-keypad";
 
 export  default {
 	name:  "App",
@@ -58,6 +58,10 @@ export  default {
 </script>
 ```
 
+## Demo
+
+https://chae-sumin.github.io/vue-numeric-keypad/
+
 ## Props and Options
 
 The props have to deliver changing values or objects, so bind them with `v-bind:` or `:`. 
@@ -80,8 +84,9 @@ In addition, `value` and `show` require two-way binding, so add the `.sync` modi
 |`buttonStyles`|Set the style of the button.|Object<br>(Style Object)|Check below.|
 |`deleteButtonStyles`|Set the style of the delete button.|Object<br>(Style Object)|`buttonStyles`|
 |`blankButtonStyles`|Set the style of the blank button.|Object<br>(Style Object)|`buttonStyles`|
-|`rows`|Sets the number of rows in the key array.<br>Valid when buttonWrapStyles is the default.|Number|4|
-|`columns`|Sets the number of columns in the key array.<br>Valid when buttonWrapStyles is the default.|Number|3|
+|`zIndex`|Sets the z-index value.<br>Valid when `keypadStyles` is the default.|Number|1|
+|`rows`|Sets the number of rows in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|4|
+|`columns`|Sets the number of columns in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|3|
 #### styles defaults
 `keypadStyles` :
 ```js
@@ -139,6 +144,3 @@ const  fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
 ## Contact
 
 cotnmin@gmail.com
-
-### Keyword
-vue vue2 vue.js random randomize virtual modal numeric number keyboard keypad 

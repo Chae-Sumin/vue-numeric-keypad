@@ -57,6 +57,7 @@ export default {
       blankButtonClass: this.options.blankButtonClass === undefined ? 'numeric-keypad__button--blank' : String(this.options.blankButtonClass),
       rows: Number(this.options.rows) || 4,
       columns: columns,
+      zIndex: Number(this.options.zIndex) || 1,
       cellWidth: 0,
       cellHeight: 0,
     };
@@ -79,6 +80,7 @@ export default {
       const fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
       return this.options.keypadStyles || {
         position: 'fixed',
+        zIndex: this.zIndex,
         bottom: 0,
         left: 0,
         right: 0,

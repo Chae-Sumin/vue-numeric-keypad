@@ -14,10 +14,12 @@ export default {
       inputValue: "",
       divValue: "",
       hiddenValue: "",
+      value5: "",
       showKeypad1: 0,
       showKeypad2: false,
       showKeypad3: false,
       showKeypad4: 1,
+      showKeypad5: false,
       valuesIndex: 0,
       options: {
         keyRandomize: true,
@@ -53,6 +55,9 @@ export default {
         buttonWrapStyles: {},
         buttonStyles: {},
       },
+      keypad5Options: {
+        keyArray: [1, 1, 2, 3, 4, '', '', -1, ''],
+      },
     };
   },
   methods: {
@@ -60,23 +65,33 @@ export default {
       this.showKeypad1++;
       this.showKeypad2 = false;
       this.showKeypad3 = false;
+      this.showKeypad5 = false;
       this.valuesIndex = valuesIndex;
     },
     openKeypad2: function () {
       this.showKeypad1 = 0;
       this.showKeypad2 = true;
       this.showKeypad3 = false;
+      this.showKeypad5 = false;
     },
     openKeypad3: function () {
       this.showKeypad1 = 0;
       this.showKeypad2 = false;
       this.showKeypad3 = true;
+      this.showKeypad5 = false;
     },
     changeKeypad4: function () {
       this.showKeypad1 = 0;
       this.showKeypad2 = false;
       this.showKeypad3 = false;
+      this.showKeypad5 = false;
       this.showKeypad4++;
+    },
+    openKeypad5: function () {
+      this.showKeypad1 = 0;
+      this.showKeypad2 = false;
+      this.showKeypad3 = false;
+      this.showKeypad5 = true;
     },
   },
   created() {
@@ -84,6 +99,7 @@ export default {
       this.showKeypad1 = 0;
       this.showKeypad2 = false;
       this.showKeypad3 = false;
+      this.showKeypad5 = false;
     }.bind(this));
   }
 };
@@ -139,8 +155,8 @@ export default {
       <br><br>
       <!--div element bound to keypad 3-->
       <label>Keypad 3 is columns 4, rows 3. Randomize every time you press a button.</label>
-      <div 
-        class="div_element"  
+      <div
+        class="div_element"
         @click.stop="openKeypad3()"
         style="width: 120px; height: 18px; border: 1px solid #0e0; white-space: nowrap; overflow: hidden;"
       >
@@ -157,7 +173,7 @@ export default {
     <div>
       <h2>The keypad that's always exposed.</h2>
       <!--hidden value bound to keypad 4-->
-      <!-- Non-essential  <input type="hidden" name="input_hidden" :value="hiddenValue" /> -->
+      <!-- Non-essential  <input type="hidden" name="input4" :value="hiddenValue" /> -->
       <label>Keypad 4 applied style to class and arranged delelte keys randomly.</label>
       <br>
       <button type="button" @click.stop="changeKeypad4()">
@@ -169,6 +185,25 @@ export default {
         :value.sync="hiddenValue"
         :show.sync="showKeypad4"
         :options="keypad4Options"
+      />
+    </div>
+    <div>
+      <h2>The keypad with customized arrangement.</h2>
+      <!--input5 bound to keypad 5-->
+      <label>Keypad 5 customized with [1, 1, 2, 3, 4, '', '', -1, '']&ensp;</label>
+      <br>
+      <input
+        type="number"
+        name="input5"
+        readonly
+        @click.stop="openKeypad5()"
+        :value="value5"
+      />
+      <!--keypad 5-->
+      <VueNumericKeypad
+        :value.sync="value5"
+        :show.sync="showKeypad5"
+        :options="keypad5Options"
       />
     </div>
   </div>

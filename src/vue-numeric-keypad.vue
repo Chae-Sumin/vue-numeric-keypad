@@ -39,13 +39,36 @@ export default {
       default: function () {
         return {};
       },
+      validator: function (value) {
+        if (!value.keyArray) return true;
+        for (let i = 0; i < value.keyArray; i++) {
+          const key = value.keyArray[i]
+          switch (typeof key) {
+            case 'number':
+              if (!Number.isInteger(key) || key < -1 || key > 9) {
+                console.error("keyArray can only have an integer 'number' between -1 and 9 and an empty 'string' type.");
+                return false;
+              }
+              break;
+            case 'string':
+              if (key) {
+                console.error("keyArray can only have an integer 'number' between -1 and 9 and an empty 'string' type.");
+                return false;
+              }
+              break;
+            default:
+              return false;
+          }
+        }
+        return true;
+      },
       required: false,
     },
   },
   data() {
     const columns = Number(this.options.columns) || 3;
     return {
-      keyArray: columns === 3 ? [1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1],
+      keyArray: this.options.keyArray === undefined ? (columns === 3 ? [1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1]) : this.options.keyArray,
       keyRandomize: this.options.keyRandomize === undefined ? true : Boolean(this.options.keyRandomize),
       randomizeWhenClick: this.options.randomizeWhenClick === undefined ? false : Boolean(this.options.randomizeWhenClick),
       fixDeleteKey: this.options.fixDeleteKey === undefined ? true : Boolean(this.options.fixDeleteKey),
@@ -124,7 +147,7 @@ export default {
   },
   methods: {
     click(key) {
-      var newVal = "";
+      let newVal = "";
       if (key === -1) {
         newVal = this.value.slice(0, -1);
       } else {
@@ -136,15 +159,21 @@ export default {
       }
     },
     randomize(fixDeleteKey) {
-      var newKeyArray = [];
-      for (var i = 0; i < this.keyArray.length; i++) {
-        var r = Math.random();
-        if (fixDeleteKey && this.keyArray[i] == -1) continue;
-        if (r < 0.5) newKeyArray.push(this.keyArray[i]);
-        else newKeyArray.unshift(this.keyArray[i]);
+      let newkeyArray = [];
+      let delKeyCnt = 0;
+      for (let i = 0; i < this.keyArray.length; i++) {
+        let r = Math.random();
+        if (fixDeleteKey && this.keyArray[i] == -1) {
+          delKeyCnt++;
+          continue;
+        }
+        if (r < 0.5) newkeyArray.push(this.keyArray[i])
+        else newkeyArray.unshift(this.keyArray[i]);
       }
-      if (fixDeleteKey) newKeyArray.push(-1);
-      this.keyArray = newKeyArray;
+      if (delKeyCnt) {
+        for (let i = 0; i < delKeyCnt; i++) newkeyArray.push(-1);
+      };
+      this.keyArray = newkeyArray;
     },
     showKey(key) {
       if (key === -1) {

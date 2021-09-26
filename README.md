@@ -1,4 +1,4 @@
-# Vue Numeric Keypad
+# Vue Numeric Keypad ![npm dev dependency version](https://img.shields.io/npm/dependency-version/vue-numeric-keypad/dev/vue)
 
 The virtual numeric keypad that can be used on Vue.
 It was produced in NPM v6.14.13 and Vue v2.6.14 environments.
@@ -60,11 +60,11 @@ export  default {
 
 ### Usage with CDN
 ```html
-<script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
-<script src="https://unpkg.com/vue-numeric-keypad@1.0.0/dist/vue-numeric-keypad.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.0.1/dist/vue-numeric-keypad.min.js"></script>
 <script>
 	Vue.use(VueNumericKeypad);
-    // new Vue({ ... });
+    new Vue({ ... });
 </script>
 ...
 <vue-numeric-keypad
@@ -101,7 +101,8 @@ In addition, `value` and `show` require two-way binding, so add the `.sync` modi
 |`blankButtonStyles`|Set the style of the blank button.|Object<br>(Style Object)|`buttonStyles`|
 |`zIndex`|Sets the z-index value.<br>Valid when `keypadStyles` is the default.|Number|1|
 |`rows`|Sets the number of rows in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|4|
-|`columns`|Sets the number of columns in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|3|
+|`columns`|Sets the number of columns in the key array.<br>Valid when `buttonWrapStyles` is the default.|
+|`keyArray`|`keyArray` can only have an integer 'number' between -1 and 9 and an empty 'string' type.<br>-1 means the delete key|Array|`columns` === 3 ?<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] :<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1]|Number|3|
 #### styles defaults
 `keypadStyles` :
 ```js
@@ -151,10 +152,10 @@ const  fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
  - You can bind only one value to one keypad, or you can bind multiple values.
  - You can always keep the value of the show true and adjust the position of the keypad so that the keypad can always be located in a fixed layout.
  - You don't have to always bind the visible value.
- -  If you want to customize a style using css, initialize the style by putting an empty object in the style-related option.
-
+ - If you want to customize a style using css, initialize the style by putting an empty object in the style-related option.
+ - If you match the total length of the optional `keyArray` with the total length of the keypad, the design will not break.
 ## License
-[MIT license](https://tldrlegal.com/license/mit-license).
+[![NPM](https://img.shields.io/npm/l/vue-numeric-keypad)](https://github.com/Chae-Sumin/vue-numeric-keypad/blob/master/LICENSE)
 
 ## Contact
 

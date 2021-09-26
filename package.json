@@ -1,6 +1,6 @@
 {
   "name": "vue-numeric-keypad",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "The virtual numeric keypad that can be used on Vue.",
   "main": "dist/vue-numeric-keypad.ssr.js",
   "browser": "dist/vue-numeric-keypad.esm.js",
@@ -62,7 +62,7 @@
     "keyboard",
     "keypad"
   ],
-  "author": "Chae-Sumin",
+  "author": "Chae-Sumin(cotnmin)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Chae-Sumin/vue-numeric-keypad/issues"

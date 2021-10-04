@@ -14,45 +14,45 @@ npm i vue-numeric-keypad
 ### Usage with Module
 ```html
 <template>
-	<div id="app">
-		<input
-			type="number"
-			:value="value"
-			@click.stop="show = true"
-			readonly
-		/>
-		<VueNumericKeypad
-			:value.sync="value"
-			:show.sync="show"
-			:options="options"
-		/>
-	</div>
+  <div id="app">
+    <input
+      type="number"
+      :value="value"
+      @click.stop="show = true"
+      readonly
+    />
+    <VueNumericKeypad
+      :value.sync="value"
+      :show.sync="show"
+      :options="options"
+    />
+  </div>
 </template>
 
 <script>
 import  VueNumericKeypad  from "vue-numeric-keypad";
 
 export  default {
-	name:  "App",
-	components: {
-		VueNumericKeypad,
-	},
-	data() {
-		return {
-			value:  "",
-			show:  0,
-			options: {
-				keyRandomize:  true,
-				randomizeClick:  true,
-				fixDeleteKey:  false,
-			},
-		};
-	},
-	created() {
-		document.addEventListener('click', function () {
-			this.show = 0;
-		}.bind(this));
-	}
+  name:  "App",
+  components: {
+    VueNumericKeypad,
+  },
+  data() {
+    return {
+      value:  "",
+      show:  0,
+      options: {
+        keyRandomize:  true,
+        randomizeClick:  true,
+        fixDeleteKey:  false,
+      },
+    };
+  },
+  created() {
+    document.addEventListener('click', function () {
+      this.show = 0;
+    }.bind(this));
+  }
 };
 </script>
 ```
@@ -62,14 +62,14 @@ export  default {
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.0.1/dist/vue-numeric-keypad.min.js"></script>
 <script>
-	Vue.use(VueNumericKeypad);
-	new Vue({ ... });
+  Vue.use(VueNumericKeypad);
+  new Vue({ ... });
 </script>
 ...
 <vue-numeric-keypad
-    :value.sync="value"
-    :show.sync="show"
-    :options="options"
+  :value.sync="value"
+  :show.sync="show"
+  :options="options"
 />
 ```
 ## Demo
@@ -107,18 +107,18 @@ In addition, `value` and `show` require two-way binding, so add the `.sync` modi
 ```js
 const  fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
 {
-	position: 'fixed',
-	bottom: 0,
-	left: 0,
-	right: 0,
-	height: '40vh',
-	padding: '10px',
-	backgroundColor: '#fff',
-	borderRadius: '10px 10px 0 0',
-	boxShadow: '0 -4px 4px rgba(0, 0, 0, 0.1)',
-	color: '#000',
-	overflow: 'hidden',
-	fontSize: fontSize + 'px'
+  position: 'fixed',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: '40vh',
+  padding: '10px',
+  backgroundColor: '#fff',
+  borderRadius: '10px 10px 0 0',
+  boxShadow: '0 -4px 4px rgba(0, 0, 0, 0.1)',
+  color: '#000',
+  overflow: 'hidden',
+  fontSize: fontSize + 'px'
 }
 ```
 `buttonWrapStyles` :
@@ -126,24 +126,24 @@ const  fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
 // columns = button columns
 // rows = button rows
 {
-	display: 'grid',
-	width: '100%',
-	height: '100%',
-	gridTemplateColumns: `repeat(${columns}, 1fr)`,
-	gridTemplateRows: `repeat(${rows}, 1fr)`,
-	gridGap: '5px'
+  display: 'grid',
+  width: '100%',
+  height: '100%',
+  gridTemplateColumns: `repeat(${columns}, 1fr)`,
+  gridTemplateRows: `repeat(${rows}, 1fr)`,
+  gridGap: '5px'
 }
 ```
 `buttonStyles` :
 ```js
 {
-	display: 'flex',
-	justifyContent: 'center',
-	alignItems: 'center',
-	backgroundColor: '#fff',
-	border: '1px solid #000',
-	borderRadius: '5px',
-	fontSize: 'inherit'
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#fff',
+  border: '1px solid #000',
+  borderRadius: '5px',
+  fontSize: 'inherit'
 }
 ```
 

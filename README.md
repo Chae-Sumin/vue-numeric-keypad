@@ -1,5 +1,4 @@
-# Vue Numeric Keypad ![npm dev dependency version](https://img.shields.io/npm/dependency-version/vue-numeric-keypad/dev/vue)
-
+# Vue Numeric Keypad [![npm](https://img.shields.io/npm/v/vue-numeric-keypad)](https://www.npmjs.com/package/vue-numeric-keypad) [![npm dev dependency version](https://img.shields.io/npm/dependency-version/vue-numeric-keypad/dev/vue)](https://www.npmjs.com/package/vue/v/2.6.14)
 The virtual numeric keypad that can be used on Vue.
 It was produced in NPM v6.14.13 and Vue v2.6.14 environments.
 By default, keys are randomly arranged and you can specify various settings using options.
@@ -64,7 +63,7 @@ export  default {
 <script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.0.1/dist/vue-numeric-keypad.min.js"></script>
 <script>
 	Vue.use(VueNumericKeypad);
-    new Vue({ ... });
+	new Vue({ ... });
 </script>
 ...
 <vue-numeric-keypad
@@ -75,7 +74,7 @@ export  default {
 ```
 ## Demo
 
-https://chae-sumin.github.io/vue-numeric-keypad/
+https://chae-sumin.github.io/vue-numeric-keypad-demo/
 
 ## Props and Options
 
@@ -147,6 +146,7 @@ const  fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
 	fontSize: 'inherit'
 }
 ```
+
 ## Tip
 
  - You can bind only one value to one keypad, or you can bind multiple values.
@@ -154,7 +154,9 @@ const  fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
  - You don't have to always bind the visible value.
  - If you want to customize a style using css, initialize the style by putting an empty object in the style-related option.
  - If you match the total length of the optional `keyArray` with the total length of the keypad, the design will not break.
+
 ## License
+
 [![NPM](https://img.shields.io/npm/l/vue-numeric-keypad)](https://github.com/Chae-Sumin/vue-numeric-keypad/blob/master/LICENSE)
 
 ## Contact

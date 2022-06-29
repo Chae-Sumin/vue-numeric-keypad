@@ -6,13 +6,14 @@
         :key="idx"
         ref="button"
         type="button"
-        :class="buttonClass + ' ' + (val === -1 ? deleteButtonClass : val === '' ? blankButtonClass : '')"
+        :class="setClass(val)"
         @click="click(val)"
         :style="btnStyle(val)"
       >
         {{ showKey(val) }}
       </button>
     </div>
+    <slot></slot>
   </div>
 </template>
 
@@ -46,11 +47,17 @@ export default {
       default: false,
       required: true,
     },
+    encryptFunc: {
+      type: Function,
+      default: c => c,
+    },
+    encryptedValue: {
+      type: Array,
+      default: () => [],
+    },
     options: {
       type: Object,
-      default: function () {
-        return {};
-      },
+      default: () => ({}),
       validator: function (value) {
         if (!value.keyArray) return true;
         for (let i = 0; i < value.keyArray; i++) {
@@ -80,6 +87,8 @@ export default {
   data() {
     const columns = Number(this.options.columns) || 3;
     return {
+      encryptedChar: typeof this.options.encryptedChar === 'string' ? this.options.encryptedChar.substring(0, 1) : "0",
+      onEncrypt: Boolean(this.options.onEncrypt) || false,
       keyArray: this.options.keyArray === undefined ? (columns === 3 ? [1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1]) : this.options.keyArray,
       keyRandomize: this.options.keyRandomize === undefined ? true : Boolean(this.options.keyRandomize),
       randomizeWhenClick: this.options.randomizeWhenClick === undefined ? false : Boolean(this.options.randomizeWhenClick),
@@ -91,7 +100,7 @@ export default {
       deleteButtonClass: this.options.deleteButtonClass === undefined ? 'numeric-keypad__button--delete' : String(this.options.deleteButtonClass),
       blankButtonClass: this.options.blankButtonClass === undefined ? 'numeric-keypad__button--blank' : String(this.options.blankButtonClass),
       rows: Number(this.options.rows) || 4,
-      columns: columns,
+      columns,
       zIndex: Number(this.options.zIndex) || 1,
       cellWidth: 0,
       cellHeight: 0,
@@ -104,7 +113,7 @@ export default {
           this.cellWidth = this.$refs.button[0].offsetWidth;
           this.cellHeight = this.$refs.button[0].offsetHeight;
         }
-      }.bind(this));
+      });
       if (this.keyRandomize) {
         this.randomize(this.fixDeleteKey);
       }
@@ -159,13 +168,26 @@ export default {
   },
   methods: {
     click(key) {
+      if (key === '') return;
       let newVal = "";
-      if (key === -1) {
-        newVal = this.value.slice(0, -1);
+      const encryptedValue = [...this.encryptedValue];
+      if (this.onEncrypt) {
+        if (key === -1) {
+          newVal = this.value.slice(0, -1);
+          encryptedValue.pop();
+        } else {
+          newVal = this.value + this.encryptedChar;
+          encryptedValue.push(this.encryptFunc(key.toString()));
+        }
       } else {
-        newVal = this.value + key;
+        if (key === -1) {
+          newVal = this.value.slice(0, -1);
+        } else {
+          newVal = this.value + key;
+        }
       }
       this.$emit("update:value", String(newVal));
+      this.$emit("update:encryptedValue", encryptedValue);
       if (this.keyRandomize && this.randomizeWhenClick) {
         this.randomize(this.fixDeleteKey);
       }
@@ -202,7 +224,17 @@ export default {
     resize() {
       this.cellWidth = this.$refs.button[0].offsetWidth;
       this.cellHeight = this.$refs.button[0].offsetHeight;
-    }
+    },
+    setClass(val) {
+      const classArr = [this.buttonClass];
+      if (val === -1) {
+        classArr.push(this.deleteButtonClass);
+      }
+      if (val === '') {
+        classArr.push(this.blankButtonClass);
+      }
+      return classArr;
+    },
   },
   mounted() {
     window.addEventListener('resize', this.resize);

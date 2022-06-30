@@ -1,14 +1,13 @@
 <template>
-  <div :id="id" :class="keypadClass" :style="keypadStyles" v-show="show" @click="stopPropagation && $event.stopPropagation()">
-    <div :class="buttonWrapClass" :style="buttonWrapStyles">
+  <div :id="id" :class="keypadClass" v-show="show" @click="stopPropagation && $event.stopPropagation()">
+    <div :class="buttonWrapClass">
       <button
         v-for="(val, idx) in keyArray"
         :key="idx"
         ref="button"
         type="button"
         :class="setClass(val)"
-        @click="click(val)"
-        :style="btnStyle(val)"
+        @click="click(val, idx)"
       >
         {{ showKey(val) }}
       </button>
@@ -59,25 +58,24 @@ export default {
       type: Object,
       default: () => ({}),
       validator: function (value) {
-        if (!value.keyArray) return true;
-        for (let i = 0; i < value.keyArray; i++) {
-          const key = value.keyArray[i]
+        const keyArrayDisable = (value.keyArray || []).some(key => {
           switch (typeof key) {
             case 'number':
-              if (!Number.isInteger(key) || key < -1 || key > 9) {
-                console.error("keyArray can only have an integer 'number' between -1 and 9 and an empty 'string' type.");
-                return false;
-              }
-              break;
+              return (!Number.isInteger(key) || key < -1 || key > 9);
             case 'string':
-              if (key) {
-                console.error("keyArray can only have an integer 'number' between -1 and 9 and an empty 'string' type.");
-                return false;
-              }
-              break;
+              return key;
             default:
               return false;
           }
+        });
+        if (keyArrayDisable) {
+          console.error("KeyArray can contain only an integer 'number' between -1 and 9 and an empty 'string'.");
+          return false;
+        }
+        const classDisable = Object.keys(value).some(key => /Class/.test(key) && /[^A-z\-_ ]/.test(value[key]));
+        if (classDisable) {
+          console.error("Class name can contain only 'a-z' and 'A-Z', '_', '-', ' '.");
+          return false;
         }
         return true;
       },
@@ -99,75 +97,77 @@ export default {
       buttonClass: this.options.buttonClass === undefined ? 'numeric-keypad__button' : String(this.options.buttonClass),
       deleteButtonClass: this.options.deleteButtonClass === undefined ? 'numeric-keypad__button--delete' : String(this.options.deleteButtonClass),
       blankButtonClass: this.options.blankButtonClass === undefined ? 'numeric-keypad__button--blank' : String(this.options.blankButtonClass),
+      activeButtonClass: this.options.activeButtonClass === undefined ? 'numeric-keypad__button--active' : String(this.options.activeButtonClass),
+      activeButtonIndexes: {},
+      activeButtonDelay: this.options.activeButtonDelay === undefined ? 300 : Number(this.options.activeButtonDelay),
       rows: Number(this.options.rows) || 4,
       columns,
       zIndex: Number(this.options.zIndex) || 1,
       cellWidth: 0,
       cellHeight: 0,
+      defaultStyleSheet: document.createElement('style'),
+      setDefaultStyle: ['all', 'button', 'wrap', 'none'].includes(this.options.setDefaultStyle) ? this.options.setDefaultStyle : 'all',
+      keypadStylesIndex: null,
     };
   },
   watch: {
     show: function () {
       this.$nextTick(function () {
-        if (this.show) {
-          this.cellWidth = this.$refs.button[0].offsetWidth;
-          this.cellHeight = this.$refs.button[0].offsetHeight;
-        }
+        if (this.show) this.resize();
       });
-      if (this.keyRandomize) {
-        this.randomize(this.fixDeleteKey);
-      }
+      if (this.keyRandomize) this.randomize();
     },
   },
   computed: {
     keypadStyles: function () {
-      const fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
-      return this.options.keypadStyles || {
-        position: 'fixed',
-        zIndex: this.zIndex,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: '40vh',
-        padding: '10px',
-        backgroundColor: '#fff',
-        borderRadius: '10px 10px 0 0',
-        boxShadow: '0 -4px 4px rgba(0, 0, 0, 0.1)',
-        color: '#000',
-        overflow: 'hidden',
-        fontSize: fontSize + 'px',
-      }
+      const fontSize = Math.round(Math.min(this.cellWidth, this.cellHeight) * 0.3);
+      return `
+        position: fixed;
+        z-index: ${this.zIndex};
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 40vh;
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.15);
+        color: #000;
+        overflow: hidden;
+        font-size: ${fontSize}px;
+      `;
     },
     buttonWrapStyles: function () {
-      return this.options.buttonWrapStyles || {
-        display: 'grid',
-        width: '100%',
-        height: '100%',
-        gridTemplateColumns: `repeat(${this.columns}, 1fr)`,
-        gridTemplateRows: `repeat(${this.rows}, 1fr)`,
-        gridGap: '5px',
-      }
+      return `
+        display: flex;
+        witdth: 100%;
+        height: 100%;
+        justify-content: space-between;
+        align-content: space-between;
+        flex-wrap: wrap;
+        gridGap: 5px;
+      `;
     },
     buttonStyles: function () {
-      return this.options.buttonStyles || {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        border: '1px solid #000',
-        borderRadius: '5px',
-        fontSize: 'inherit',
-      }
-    },
-    deleteButtonStyles: function () {
-      return this.options.deleteButtonStyles || this.options.buttonStyles || this.buttonStyles;
-    },
-    blankButtonStyles: function () {
-      return this.options.blankButtonStyles || this.options.buttonStyles || this.buttonStyles;
-    },
+      const width = `calc(${Math.round(1000 / this.columns) / 10}% - ${Math.ceil(5 * (this.columns - 1) / this.columns)}px)`;
+      const height = `calc(${Math.round(1000 / this.rows) / 10}% - ${Math.ceil(5 * (this.rows - 1) / this.rows)}px)`;
+      return `
+        flex: 0 0 auto;
+        display: flex;
+        width: ${width};
+        height: ${height};
+        justify-content: center;
+        align-items: center;
+        background-color: #fff;
+        border: 1px solid #000;
+        border-radius: 8px;
+        font-size: inherit;
+      `;
+    }
   },
   methods: {
-    click(key) {
+    click(key, idx) {
+      this.activeButton(key, idx);
       if (key === '') return;
       let newVal = "";
       const encryptedValue = [...this.encryptedValue];
@@ -188,20 +188,18 @@ export default {
       }
       this.$emit("update:value", String(newVal));
       this.$emit("update:encryptedValue", encryptedValue);
-      if (this.keyRandomize && this.randomizeWhenClick) {
-        this.randomize(this.fixDeleteKey);
-      }
+      if (this.keyRandomize && this.randomizeWhenClick) this.randomize();
     },
-    randomize(fixDeleteKey) {
+    randomize() {
       let newkeyArray = [];
       let delKeyCnt = 0;
       for (let i = 0; i < this.keyArray.length; i++) {
         let r = Math.random();
-        if (fixDeleteKey && this.keyArray[i] == -1) {
+        if (this.fixDeleteKey && this.keyArray[i] == -1) {
           delKeyCnt++;
           continue;
         }
-        if (r < 0.5) newkeyArray.push(this.keyArray[i])
+        if (r < 0.5) newkeyArray.push(this.keyArray[i]);
         else newkeyArray.unshift(this.keyArray[i]);
       }
       if (delKeyCnt) {
@@ -214,35 +212,67 @@ export default {
         return "del";
       } else return key;
     },
-    btnStyle(key) {
-      if (key === -1) {
-        return this.deleteButtonStyles;
-      } else if (typeof key === 'number') {
-        return this.buttonStyles;
-      } else return this.blankButtonStyles;
-    },
     resize() {
       this.cellWidth = this.$refs.button[0].offsetWidth;
       this.cellHeight = this.$refs.button[0].offsetHeight;
+      const sheet = this.defaultStyleSheet.sheet;
+      if (sheet && this.keypadStylesIndex !== null) {
+        sheet.deleteRule(0);
+        sheet.insertRule(`.${this.keypadClass.split(' ')[0]} {${this.keypadStyles}}`, 0);
+      }
     },
-    setClass(val) {
+    setClass(key) {
       const classArr = [this.buttonClass];
-      if (val === -1) {
+      if (key === -1) {
         classArr.push(this.deleteButtonClass);
       }
-      if (val === '') {
+      if (key === '') {
         classArr.push(this.blankButtonClass);
       }
       return classArr;
     },
+    activeButton(key, idx) {
+      if (this.activeButtonIndexes[key]) {
+        clearTimeout(this.activeButtonIndexes[key]);
+      } else {
+        this.$refs.button[idx].classList.add(this.activeButtonClass);
+      }
+      this.activeButtonIndexes[key] = setTimeout(() => {
+        this.$refs.button[idx].classList.remove(this.activeButtonClass);
+        clearTimeout(this.activeButtonIndexes[key]);
+        delete this.activeButtonIndexes[key];
+      }, this.activeButtonDelay);
+    },
+    initDefaultStyles(sheet) {
+      const test = /[^A-z\-_ ]/;
+      let padIndex = 0;
+      if (this.setDefaultStyle !== 'button') {
+        if (!test.test(this.keypadClass)) {
+          this.keypadStylesIndex = padIndex;
+          sheet.insertRule(`.${this.keypadClass.split(' ')[0]} {${this.keypadStyles}}`, padIndex++);
+        }
+        if (!test.test(this.buttonWrapClass)) {
+          sheet.insertRule(`.${this.buttonWrapClass.split(' ')[0]} {${this.buttonWrapStyles}}`, padIndex++);
+        }
+      }
+      if (this.setDefaultStyle !== 'wrap') {
+        if (!test.test(this.buttonClass)) {
+          sheet.insertRule(`.${this.buttonClass.split(' ')[0]} {${this.buttonStyles}}`, padIndex++);
+          if (!test.test(this.activeButtonClass)) {
+            sheet.insertRule(`.${this.buttonClass.split(' ')[0]}.${this.activeButtonClass.split(' ')[0]} {background-color: #eaeaea;}`, padIndex++);
+          }
+        }
+      }
+    },
   },
   mounted() {
     window.addEventListener('resize', this.resize);
-    this.cellWidth = this.$refs.button[0].offsetWidth;
-    this.cellHeight = this.$refs.button[0].offsetHeight;
-    if (this.keyRandomize) {
-      this.randomize(this.fixDeleteKey);
+    if (this.setDefaultStyle !== 'none') {
+      document.head.appendChild(this.defaultStyleSheet);
+      this.initDefaultStyles(this.defaultStyleSheet.sheet);
     }
+    if (this.keyRandomize) this.randomize();
+    this.resize();
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.resize);

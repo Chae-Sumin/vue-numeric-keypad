@@ -6,7 +6,7 @@
         :key="idx"
         ref="button"
         type="button"
-        :class="setClass(val)"
+        :class="setClass(val, idx)"
         @click="click(val, idx)"
       >
         {{ showKey(val) }}
@@ -72,9 +72,9 @@ export default {
           console.error("KeyArray can contain only an integer 'number' between -1 and 9 and an empty 'string'.");
           return false;
         }
-        const classDisable = Object.keys(value).some(key => /Class/.test(key) && /[^A-z\-_ ]/.test(value[key]));
+        const classDisable = Object.keys(value).some(key => /Class/.test(key) && /[^0-9A-z\-_ ]/.test(value[key]));
         if (classDisable) {
-          console.error("Class name can contain only 'a-z' and 'A-Z', '_', '-', ' '.");
+          console.error("Class name can contain only 'a-z' and 'A-Z', '0-9', '_', '-', ' '.");
           return false;
         }
         return true;
@@ -84,29 +84,32 @@ export default {
   },
   data() {
     const columns = Number(this.options.columns) || 3;
+    const arr1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1];
+    const arr2 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1];
     return {
       encryptedChar: typeof this.options.encryptedChar === 'string' ? this.options.encryptedChar.substring(0, 1) : "0",
-      onEncrypt: Boolean(this.options.onEncrypt) || false,
-      keyArray: this.options.keyArray === undefined ? (columns === 3 ? [1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1]) : this.options.keyArray,
-      keyRandomize: this.options.keyRandomize === undefined ? true : Boolean(this.options.keyRandomize),
-      randomizeWhenClick: this.options.randomizeWhenClick === undefined ? false : Boolean(this.options.randomizeWhenClick),
-      fixDeleteKey: this.options.fixDeleteKey === undefined ? true : Boolean(this.options.fixDeleteKey),
-      stopPropagation: this.options.stopPropagation === undefined ? true : Boolean(this.options.stopPropagation),
-      keypadClass: this.options.keypadClass === undefined ? 'numeric-keypad' : String(this.options.keypadClass),
-      buttonWrapClass: this.options.buttonWrapClass === undefined ? 'numeric-keypad__button-wrap' : String(this.options.buttonWrapClass),
-      buttonClass: this.options.buttonClass === undefined ? 'numeric-keypad__button' : String(this.options.buttonClass),
-      deleteButtonClass: this.options.deleteButtonClass === undefined ? 'numeric-keypad__button--delete' : String(this.options.deleteButtonClass),
-      blankButtonClass: this.options.blankButtonClass === undefined ? 'numeric-keypad__button--blank' : String(this.options.blankButtonClass),
-      activeButtonClass: this.options.activeButtonClass === undefined ? 'numeric-keypad__button--active' : String(this.options.activeButtonClass),
+      onEncrypt: Boolean(this.options.onEncrypt),
+      keyArray: this.options.keyArray || (columns === 3 ? arr1 : arr2),
+      keyRandomize: Boolean(this.options.keyRandomize ?? true),
+      randomizeWhenClick: Boolean(this.options.randomizeWhenClick),
+      fixDeleteKey: Boolean(this.options.fixDeleteKey ?? true),
+      stopPropagation: Boolean(this.options.stopPropagation ?? true),
+      keypadClass: this.options.keypadClass || 'numeric-keypad',
+      buttonWrapClass: this.options.buttonWrapClass || 'numeric-keypad__button-wrap',
+      buttonClass: this.options.buttonClass || 'numeric-keypad__button',
+      deleteButtonClass: this.options.deleteButtonClass || 'numeric-keypad__button--delete',
+      blankButtonClass: this.options.blankButtonClass || 'numeric-keypad__button--blank',
+      activeButtonClass: this.options.activeButtonClass || 'numeric-keypad__button--active',
       activeButtonIndexes: {},
-      activeButtonDelay: this.options.activeButtonDelay === undefined ? 300 : Number(this.options.activeButtonDelay),
+      activeButtonDelay: Number(this.options.activeButtonDelay) || 300,
+      pseudoClick: Boolean(this.options.pseudoClick),
       rows: Number(this.options.rows) || 4,
       columns,
       zIndex: Number(this.options.zIndex) || 1,
       cellWidth: 0,
       cellHeight: 0,
       defaultStyleSheet: document.createElement('style'),
-      setDefaultStyle: ['all', 'button', 'wrap', 'none'].includes(this.options.setDefaultStyle) ? this.options.setDefaultStyle : 'all',
+      setDefaultStyle: ['all', 'button', 'wrap', 'none'].find(s => s === this.options.setDefaultStyle) || 'all',
       keypadStylesIndex: null,
     };
   },
@@ -167,15 +170,19 @@ export default {
   },
   methods: {
     click(key, idx) {
-      this.activeButton(key, idx);
-      if (key === '') return;
+      this.activeButton(idx);
+      if (this.pseudoClick) {
+        const l = this.keyArray.length;
+        const pIdx = Math.floor((Math.random() * (l - 1)) + idx + 1) % l;
+        this.activeButton(pIdx);
+      }
       let newVal = "";
       const encryptedValue = [...this.encryptedValue];
       if (this.onEncrypt) {
         if (key === -1) {
           newVal = this.value.slice(0, -1);
           encryptedValue.pop();
-        } else {
+        } else if (key !== '') {
           newVal = this.value + this.encryptedChar;
           encryptedValue.push(this.encryptFunc(key.toString()));
         }
@@ -218,10 +225,10 @@ export default {
       const sheet = this.defaultStyleSheet.sheet;
       if (sheet && this.keypadStylesIndex !== null) {
         sheet.deleteRule(0);
-        sheet.insertRule(`.${this.keypadClass.split(' ')[0]} {${this.keypadStyles}}`, 0);
+        sheet.insertRule(`.${this.keypadClass.trim().split(' ')[0]} {${this.keypadStyles}}`, 0);
       }
     },
-    setClass(key) {
+    setClass(key, idx) {
       const classArr = [this.buttonClass];
       if (key === -1) {
         classArr.push(this.deleteButtonClass);
@@ -229,37 +236,41 @@ export default {
       if (key === '') {
         classArr.push(this.blankButtonClass);
       }
+      if (this.activeButtonIndexes[idx]) {
+        classArr.push(this.activeButtonClass);
+      }
       return classArr;
     },
-    activeButton(key, idx) {
-      if (this.activeButtonIndexes[key]) {
-        clearTimeout(this.activeButtonIndexes[key]);
+    activeButton(idx) {
+      if (this.activeButtonIndexes[idx]) {
+        clearTimeout(this.activeButtonIndexes[idx]);
       } else {
         this.$refs.button[idx].classList.add(this.activeButtonClass);
       }
-      this.activeButtonIndexes[key] = setTimeout(() => {
+      this.activeButtonIndexes[idx] = setTimeout(() => {
         this.$refs.button[idx].classList.remove(this.activeButtonClass);
-        clearTimeout(this.activeButtonIndexes[key]);
-        delete this.activeButtonIndexes[key];
+        clearTimeout(this.activeButtonIndexes[idx]);
+        console.log(this.activeButtonIndexes);
+        delete this.activeButtonIndexes[idx];
       }, this.activeButtonDelay);
     },
     initDefaultStyles(sheet) {
-      const test = /[^A-z\-_ ]/;
+      const test = /[^0-9A-z\-_ ]/;
       let padIndex = 0;
       if (this.setDefaultStyle !== 'button') {
         if (!test.test(this.keypadClass)) {
           this.keypadStylesIndex = padIndex;
-          sheet.insertRule(`.${this.keypadClass.split(' ')[0]} {${this.keypadStyles}}`, padIndex++);
+          sheet.insertRule(`.${this.keypadClass.trim().split(' ')[0]} {${this.keypadStyles}}`, padIndex++);
         }
         if (!test.test(this.buttonWrapClass)) {
-          sheet.insertRule(`.${this.buttonWrapClass.split(' ')[0]} {${this.buttonWrapStyles}}`, padIndex++);
+          sheet.insertRule(`.${this.buttonWrapClass.trim().split(' ')[0]} {${this.buttonWrapStyles}}`, padIndex++);
         }
       }
       if (this.setDefaultStyle !== 'wrap') {
         if (!test.test(this.buttonClass)) {
-          sheet.insertRule(`.${this.buttonClass.split(' ')[0]} {${this.buttonStyles}}`, padIndex++);
+          sheet.insertRule(`.${this.buttonClass.trim().split(' ')[0]} {${this.buttonStyles}}`, padIndex++);
           if (!test.test(this.activeButtonClass)) {
-            sheet.insertRule(`.${this.buttonClass.split(' ')[0]}.${this.activeButtonClass.split(' ')[0]} {background-color: #eaeaea;}`, padIndex++);
+            sheet.insertRule(`.${this.buttonClass.trim().split(' ')[0]}.${this.activeButtonClass.trim().split(' ')[0]} {background-color: #eaeaea;}`, padIndex++);
           }
         }
       }

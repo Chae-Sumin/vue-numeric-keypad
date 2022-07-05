@@ -250,7 +250,6 @@ export default {
       this.activeButtonIndexes[idx] = setTimeout(() => {
         this.$refs.button[idx].classList.remove(this.activeButtonClass);
         clearTimeout(this.activeButtonIndexes[idx]);
-        console.log(this.activeButtonIndexes);
         delete this.activeButtonIndexes[idx];
       }, this.activeButtonDelay);
     },

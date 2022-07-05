@@ -2,7 +2,7 @@
   "name": "vue-numeric-keypad",
   "version": "1.2.0",
   "description": "The virtual numeric keypad that can be used on Vue.",
-  "main": "src/vue-numeric-keypad.vue",
+  "main": "dist/vue-numeric-keypad.ssr.js",
   "browser": "dist/vue-numeric-keypad.esm.js",
   "module": "dist/vue-numeric-keypad.esm.js",
   "unpkg": "dist/vue-numeric-keypad.min.js",

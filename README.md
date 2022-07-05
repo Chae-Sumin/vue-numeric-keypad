@@ -60,7 +60,7 @@ export  default {
 ### Usage with CDN
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.0.1/dist/vue-numeric-keypad.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.2.0/dist/vue-numeric-keypad.min.js"></script>
 <script>
   Vue.use(VueNumericKeypad);
   new Vue({ ... });
@@ -79,71 +79,103 @@ https://chae-sumin.github.io/vue-numeric-keypad-demo/
 ## Props and Options
 
 The props have to deliver changing values or objects, so bind them with `v-bind:` or `:`.
-In addition, `value` and `show` require two-way binding, so add the `.sync` modifier.
+In addition, `value` and `show`, `encryptedValue` require two-way binding, so add the `.sync` modifier.
 ### props
 |property|Description|Required|type|
 |-|-|-|-|
 |`id`|ID of the keypad.|False|String|
 |`:value.sync`|The value to change when entering the keypad.|True|String variable|
-|`:show.sync`|Bind to the v-show on the keypad. And adjust the font size and randomize the key arrangement.|True|Boolean or Number variable|
+|`:encryptedValue.sync` \| `:encrypted-value.sync`|Array in which encrypted values will be entered<br>when `options.onEncrypt: true`.|False|Array variable|
+|`:show.sync`|Bind to the v-show on the keypad. And adjust the font size and randomize the key arrangement.|True|(Boolean \| Number) variable|
+|`:encryptFunc` \| `:encrypt-func`|A function that encrypts the input<br>when `options.onEncrypt: true`.|False|Function|
 |`:options`|Set several values.<br>(details can be found below)|False|Object|
 ### options
 |option|Description|type|default|
 |-|-|-|-|
-|`keyRandomize`|If the value is true, randomize the key array whenever the `show` prop changes.|Boolean|True|
-|`randomizeWhenClick`|If the value is true and `keyRandomize` is true, randomize the key array whenever you press the key.|Boolean|False|
-|`fixDeleteKey`|If the value is true, the delete key is fixed at the end when the key array is randomized.|Boolean|True|
-|`keypadStyles`|Set the style of the keypad.|Object<br>(Style Object)|Check below.|
-|`buttonWrapStyles`|Set the style of wrapping the button.|Object<br>(Style Object)|Check below.|
-|`buttonStyles`|Set the style of the button.|Object<br>(Style Object)|Check below.|
-|`deleteButtonStyles`|Set the style of the delete button.|Object<br>(Style Object)|`buttonStyles`|
-|`blankButtonStyles`|Set the style of the blank button.|Object<br>(Style Object)|`buttonStyles`|
+|`keyRandomize`|Randomize the key array whenever the `show` prop changes.|Boolean|true|
+|`randomizeWhenClick`|If the value is true and `keyRandomize` is true, randomize the key array whenever you press the key.|Boolean|false|
+|`fixDeleteKey`|The delete key is fixed at the end when the key array is randomized.|Boolean|true|
 |`zIndex`|Sets the z-index value.<br>Valid when `keypadStyles` is the default.|Number|1|
 |`rows`|Sets the number of rows in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|4|
-|`columns`|Sets the number of columns in the key array.<br>Valid when `buttonWrapStyles` is the default.|
-|`keyArray`|`keyArray` can only have an integer 'number' between -1 and 9 and an empty 'string' type.<br>-1 means the delete key|Array|`columns` === 3 ?<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] :<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1]|Number|3|
-#### styles defaults
+|`columns`|Sets the number of columns in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|3|
+|`keyArray`|Can only have an integer 'number' between -1 and 9 and an empty 'string' type.<br>-1 means the delete key|Array|`columns` === 3 ?<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] :<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1]|
+|`onEncrypt`|Using encryption|Boolean|false|
+|`encryptedChar`|Will be placed in `:value.sync` of the original value.<br>For strings of length greater than 1, only the first character is valid.|String|'0'|
+|`activeButtonDelay`|The time when `activeButtonClass` is maintained (ms)|Number|300|
+|`pseudoClick`|Clicking a button triggers a pseudo click on another button|Boolean|false|
+|`setDefaultStyle`|'all': Use All default styles<br>'button': Use `buttonStyles`, `activeButtonStyles` default styles<br>'wrap': Use `keypadStyles`, `buttonWrapStyles` default styles<br>'none': Not use all default styles|['all', 'button', 'wrap', 'none']|'all'|
+|`stopPropagation`|Prevents the propagation of events that turn off `:show.sync`.|Boolean|true|
+
+> #### class option
+> The class option must meet the following conditions:
+> - Only 'a-z' and 'A-Z', '0-9', '_', '-', ' ' can be contained
+> - Use ' ' to separate classes.
+> - The default style applies to the first class.
+>
+> |property|default|
+> |-|-|
+> |`keypadClass`|'numeric-keypad'|
+> |`buttonWrapClass`|'numeric-keypad__button-wrap'|
+> |`buttonClass`|'numeric-keypad__button'|
+> |`deleteButtonClass`|'numeric-keypad__button--delete'|
+> |`blankButtonClass`|'numeric-keypad__button--blank'|
+> |`activeButtonClass`|'numeric-keypad__button--active'|
+
+### styles defaults
 `keypadStyles` :
-```js
-const  fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
-{
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: '40vh',
-  padding: '10px',
-  backgroundColor: '#fff',
-  borderRadius: '10px 10px 0 0',
-  boxShadow: '0 -4px 4px rgba(0, 0, 0, 0.1)',
-  color: '#000',
-  overflow: 'hidden',
-  fontSize: fontSize + 'px'
+```css
+// The font size changes automatically when the button size changes.
+// fontSize = Math.min(cellWidth, cellHeight) * 0.3;
+.${keypadClass} {
+  position: fixed;
+  z-index: ${zIndex};
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40vh;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.15);
+  color: #000;
+  overflow: hidden;
+  font-size: ${fontSize}px;
 }
 ```
 `buttonWrapStyles` :
-```js
-// columns = button columns
-// rows = button rows
-{
-  display: 'grid',
-  width: '100%',
-  height: '100%',
-  gridTemplateColumns: `repeat(${columns}, 1fr)`,
-  gridTemplateRows: `repeat(${rows}, 1fr)`,
-  gridGap: '5px'
+```css
+.${buttonWrapClass} {
+  display: flex;
+  witdth: 100%;
+  height: 100%;
+  justify-content: space-between;
+  align-content: space-between;
+  flex-wrap: wrap;
+  gridGap: 5px;
 }
 ```
 `buttonStyles` :
-```js
-{
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: '#fff',
-  border: '1px solid #000',
-  borderRadius: '5px',
-  fontSize: 'inherit'
+```css
+// const width = `calc(${Math.round(1000 / columns) / 10}% - ${Math.ceil(5 * (columns - 1) / columns)}px)`;
+// const height = `calc(${Math.round(1000 / rows) / 10}% - ${Math.ceil(5 * (rows - 1) / rows)}px)`;
+.${buttonClass} {
+  flex: 0 0 auto;
+  display: flex;
+  width: ${width};
+  height: ${height};
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 8px;
+  font-size: inherit;
+}
+```
+`activeButtonStyles` :
+```css
+// Specificity (0, 2, 0)
+.${buttonClass}.${activeButtonClass} {
+  background-color: #eaeaea;
 }
 ```
 
@@ -152,8 +184,17 @@ const  fontSize = Math.min(this.cellWidth, this.cellHeight) * 0.3;
  - You can bind only one value to one keypad, or you can bind multiple values.
  - You can always keep the value of the show true and adjust the position of the keypad so that the keypad can always be located in a fixed layout.
  - You don't have to always bind the visible value.
- - If you want to customize a style using css, initialize the style by putting an empty object in the style-related option.
  - If you match the total length of the optional `keyArray` with the total length of the keypad, the design will not break.
+ - You can use `Slot`
+ ```html
+ <VueNumericKeypad
+      :value.sync="value"
+      :show.sync="show"
+      :options="options"
+>
+  <div>Something you want</div>
+</VueNumericKeypad>
+ ```
 
 ## License
 

@@ -109,7 +109,7 @@ export default {
       cellWidth: 0,
       cellHeight: 0,
       defaultStyleSheet: document.createElement('style'),
-      setDefaultStyle: ['all', 'button', 'wrap', 'none'].find(s => s === this.options.setDefaultStyle) || 'all',
+      defaultStyle: ['all', 'button', 'wrap', 'none'].find(s => s === this.options.setDefaultStyle) || 'all',
       keypadStylesIndex: null,
     };
   },
@@ -176,21 +176,21 @@ export default {
         const pIdx = Math.floor((Math.random() * (l - 1)) + idx + 1) % l;
         this.activeButton(pIdx);
       }
-      let newVal = "";
+      let newVal = this.value;
       const encryptedValue = [...this.encryptedValue];
       if (this.onEncrypt) {
         if (key === -1) {
           newVal = this.value.slice(0, -1);
           encryptedValue.pop();
         } else if (key !== '') {
-          newVal = this.value + this.encryptedChar;
+          newVal += this.encryptedChar;
           encryptedValue.push(this.encryptFunc(key.toString()));
         }
       } else {
         if (key === -1) {
           newVal = this.value.slice(0, -1);
         } else {
-          newVal = this.value + key;
+          newVal += key;
         }
       }
       this.$emit("update:value", String(newVal));

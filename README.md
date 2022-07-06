@@ -103,7 +103,7 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
 |`encryptedChar`|Will be placed in `:value.sync` of the original value.<br>For strings of length greater than 1, only the first character is valid.|String|'0'|
 |`activeButtonDelay`|The time when `activeButtonClass` is maintained (ms)|Number|300|
 |`pseudoClick`|Clicking a button triggers a pseudo click on another button|Boolean|false|
-|`setDefaultStyle`|'all': Use All default styles<br>'button': Use `buttonStyles`, `activeButtonStyles` default styles<br>'wrap': Use `keypadStyles`, `buttonWrapStyles` default styles<br>'none': Not use all default styles|['all', 'button', 'wrap', 'none']|'all'|
+|`defaultStyle`|'all': Use All default styles<br>'button': Use `buttonStyles`, `activeButtonStyles` default styles<br>'wrap': Use `keypadStyles`, `buttonWrapStyles` default styles<br>'none': Not use all default styles|['all', 'button', 'wrap', 'none']|'all'|
 |`stopPropagation`|Prevents the propagation of events that turn off `:show.sync`.|Boolean|true|
 
 > #### class option

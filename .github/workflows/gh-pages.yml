@@ -16,7 +16,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm run demo
-      - run: sed -i "" 's/="\//="\.\//g' ./dist/index.html
+      - run: sed -i 's/="\//="\.\//g' ./dist/index.html
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_PAGE_TOKEN }}

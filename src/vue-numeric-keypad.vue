@@ -88,7 +88,7 @@ export default {
     const arr2 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1];
     return {
       encryptedChar: typeof this.options.encryptedChar === 'string' ? this.options.encryptedChar.substring(0, 1) : "0",
-      onEncrypt: Boolean(this.options.onEncrypt),
+      encrypt: Boolean(this.options.encrypt),
       keyArray: this.options.keyArray || (columns === 3 ? arr1 : arr2),
       keyRandomize: Boolean(this.options.keyRandomize ?? true),
       randomizeWhenClick: Boolean(this.options.randomizeWhenClick),
@@ -109,7 +109,7 @@ export default {
       cellWidth: 0,
       cellHeight: 0,
       defaultStyleSheet: document.createElement('style'),
-      defaultStyle: ['all', 'button', 'wrap', 'none'].find(s => s === this.options.setDefaultStyle) || 'all',
+      defaultStyle: ['all', 'button', 'wrap', 'none'].find(s => s === this.options.defaultStyle) || 'all',
       keypadStylesIndex: null,
     };
   },
@@ -178,7 +178,7 @@ export default {
       }
       let newVal = this.value;
       const encryptedValue = [...this.encryptedValue];
-      if (this.onEncrypt) {
+      if (this.encrypt) {
         if (key === -1) {
           newVal = this.value.slice(0, -1);
           encryptedValue.pop();
@@ -256,7 +256,7 @@ export default {
     initDefaultStyles(sheet) {
       const test = /[^0-9A-z\-_ ]/;
       let padIndex = 0;
-      if (this.setDefaultStyle !== 'button') {
+      if (this.defaultStyle !== 'button') {
         if (!test.test(this.keypadClass)) {
           this.keypadStylesIndex = padIndex;
           sheet.insertRule(`.${this.keypadClass.trim().split(' ')[0]} {${this.keypadStyles}}`, padIndex++);
@@ -265,7 +265,7 @@ export default {
           sheet.insertRule(`.${this.buttonWrapClass.trim().split(' ')[0]} {${this.buttonWrapStyles}}`, padIndex++);
         }
       }
-      if (this.setDefaultStyle !== 'wrap') {
+      if (this.defaultStyle !== 'wrap') {
         if (!test.test(this.buttonClass)) {
           sheet.insertRule(`.${this.buttonClass.trim().split(' ')[0]} {${this.buttonStyles}}`, padIndex++);
           if (!test.test(this.activeButtonClass)) {
@@ -277,7 +277,7 @@ export default {
   },
   mounted() {
     window.addEventListener('resize', this.resize);
-    if (this.setDefaultStyle !== 'none') {
+    if (this.defaultStyle !== 'none') {
       document.head.appendChild(this.defaultStyleSheet);
       this.initDefaultStyles(this.defaultStyleSheet.sheet);
     }

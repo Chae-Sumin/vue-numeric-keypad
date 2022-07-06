@@ -60,7 +60,7 @@ export  default {
 ### Usage with CDN
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.2.1/dist/vue-numeric-keypad.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.2.2/dist/vue-numeric-keypad.min.js"></script>
 <script>
   Vue.use(VueNumericKeypad);
   new Vue({ ... });
@@ -85,9 +85,9 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
 |-|-|-|-|
 |`id`|ID of the keypad.|False|String|
 |`:value.sync`|The value to change when entering the keypad.|True|String variable|
-|`:encryptedValue.sync` \| `:encrypted-value.sync`|Array in which encrypted values will be entered<br>when `options.onEncrypt: true`.|False|Array variable|
+|`:encryptedValue.sync` \| `:encrypted-value.sync`|Array in which encrypted values will be entered<br>when `options.encrypt: true`.|False|Array variable|
 |`:show.sync`|Bind to the v-show on the keypad. And adjust the font size and randomize the key arrangement.|True|(Boolean \| Number) variable|
-|`:encryptFunc` \| `:encrypt-func`|A function that encrypts the input<br>when `options.onEncrypt: true`.|False|Function|
+|`:encryptFunc` \| `:encrypt-func`|A function that encrypts the input<br>when `options.encrypt: true`.|False|Function|
 |`:options`|Set several values.<br>(details can be found below)|False|Object|
 ### options
 |option|Description|type|default|
@@ -99,7 +99,7 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
 |`rows`|Sets the number of rows in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|4|
 |`columns`|Sets the number of columns in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|3|
 |`keyArray`|Can only have an integer 'number' between -1 and 9 and an empty 'string' type.<br>-1 means the delete key|Array|`columns` === 3 ?<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] :<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1]|
-|`onEncrypt`|Using encryption|Boolean|false|
+|`encrypt`|Using encryption|Boolean|false|
 |`encryptedChar`|Will be placed in `:value.sync` of the original value.<br>For strings of length greater than 1, only the first character is valid.|String|'0'|
 |`activeButtonDelay`|The time when `activeButtonClass` is maintained (ms)|Number|300|
 |`pseudoClick`|Clicking a button triggers a pseudo click on another button|Boolean|false|

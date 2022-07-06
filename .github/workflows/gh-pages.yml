@@ -1,0 +1,23 @@
+name: gh pages
+
+on:
+  push:
+    branches:
+      - test_gh
+
+jobs:
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+          registry-url: https://registry.npmjs.org/
+      - run: npm ci
+      - run: npm run demo
+
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GH_PAGE_TOKEN }}
+          publish_dir: ./dist

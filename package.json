@@ -1,6 +1,6 @@
 {
   "name": "vue-numeric-keypad",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "The virtual numeric keypad that can be used on Vue.",
   "main": "dist/vue-numeric-keypad.ssr.js",
   "browser": "dist/vue-numeric-keypad.esm.js",
@@ -17,7 +17,8 @@
     "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
     "build:ssr": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
     "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
-    "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife"
+    "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife",
+    "demo": "vue-cli-service build dev/serve.js"
   },
   "dependencies": {},
   "devDependencies": {
@@ -31,6 +32,7 @@
     "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-service": "^4.5.13",
     "cross-env": "^7.0.3",
+    "gh-pages": "^4.0.0",
     "minimist": "^1.2.5",
     "rimraf": "^3.0.2",
     "rollup": "^2.52.8",
@@ -60,7 +62,10 @@
     "numeric",
     "number",
     "keyboard",
-    "keypad"
+    "keypad",
+    "encrypt",
+    "encryption",
+    "pseudo"
   ],
   "author": "Chae-Sumin(cotnmin)",
   "license": "MIT",

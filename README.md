@@ -60,7 +60,7 @@ export  default {
 ### Usage with CDN
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.2.2/dist/vue-numeric-keypad.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.2.3/dist/vue-numeric-keypad.min.js"></script>
 <script>
   Vue.use(VueNumericKeypad);
   new Vue({ ... });
@@ -74,7 +74,7 @@ export  default {
 ```
 ## Demo
 
-https://chae-sumin.github.io/vue-numeric-keypad-demo/
+https://chae-sumin.github.io/vue-numeric-keypad/
 
 ## Props and Options
 

@@ -33,6 +33,7 @@
     "@vue/cli-service": "^4.5.13",
     "cross-env": "^7.0.3",
     "gh-pages": "^4.0.0",
+    "jsencrypt": "^3.2.1",
     "minimist": "^1.2.5",
     "rimraf": "^3.0.2",
     "rollup": "^2.52.8",

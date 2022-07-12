@@ -29,6 +29,8 @@ if (!Object.entries) {
   };
 }
 
+const arr1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1];
+const arr2 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1];
 export default {
   name: "VueNumericKeypad",
   props: {
@@ -84,8 +86,6 @@ export default {
   },
   data() {
     const columns = Number(this.options.columns) || 3;
-    const arr1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1];
-    const arr2 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1];
     return {
       encryptedChar: typeof this.options.encryptedChar === 'string' ? this.options.encryptedChar.substring(0, 1) : "0",
       encrypt: Boolean(this.options.encrypt),
@@ -103,6 +103,8 @@ export default {
       activeButtonIndexes: {},
       activeButtonDelay: Number(this.options.activeButtonDelay) || 300,
       pseudoClick: Boolean(this.options.pseudoClick),
+      pseudoClickDeleteKey: this.options.pseudoClickDeleteKey === undefined ? Boolean(this.options.pseudoClick) : Boolean(this.options.pseudoClickDeleteKey),
+      pseudoClickBlankKey: this.options.pseudoClickBlankKey === undefined ? Boolean(this.options.pseudoClick) : Boolean(this.options.pseudoClickBlankKey),
       rows: Number(this.options.rows) || 4,
       columns,
       zIndex: Number(this.options.zIndex) || 1,
@@ -120,11 +122,40 @@ export default {
       });
       if (this.keyRandomize) this.randomize();
     },
+    options: {
+      deep: true,
+      handler(options) {
+        if (typeof options !== 'object') return;
+        const columns = Number(options.columns) || 3;
+        this.encryptedChar = typeof options.encryptedChar === 'string' ? options.encryptedChar.substring(0, 1) : "0";
+        this.keyArray = options.keyArray || (columns === 3 ? arr1 : arr2);
+        this.keyRandomize = Boolean(options.keyRandomize === undefined || options.keyRandomize);
+        this.randomizeWhenClick = Boolean(options.randomizeWhenClick);
+        this.fixDeleteKey = Boolean(options.fixDeleteKey === undefined || options.fixDeleteKey);
+        this.stopPropagation = Boolean(options.stopPropagation === undefined || options.stopPropagation);
+        this.activeButtonDelay = Number(options.activeButtonDelay) || 300;
+        this.pseudoClick = Boolean(options.pseudoClick);
+        this.pseudoClickDeleteKey = options.pseudoClickDeleteKey === undefined ? Boolean(options.pseudoClick) : Boolean(options.pseudoClickDeleteKey);
+        this.pseudoClickBlankKey = options.pseudoClickBlankKey === undefined ? Boolean(options.pseudoClick) : Boolean(options.pseudoClickBlankKey);
+        this.rows = Number(options.rows) || 4;
+        this.zIndex = Number(options.zIndex) || 1;
+        const defaultStyle = ['all', 'button', 'wrap', 'none'].find(s => s === options.defaultStyle) || 'all';
+        if (this.defaultStyle !== defaultStyle) {
+          this.defaultStyle = defaultStyle;
+          document.head.removeChild(this.defaultStyleSheet);
+          this.defaultStyleSheet = document.createElement('style');
+          if (this.defaultStyle !== 'none') {
+            document.head.appendChild(this.defaultStyleSheet);
+            this.initDefaultStyles(this.defaultStyleSheet.sheet);
+          }
+        }
+        if (this.keyRandomize) this.randomize();
+    }}
   },
   computed: {
     keypadStyles: function () {
       const fontSize = Math.round(Math.min(this.cellWidth, this.cellHeight) * 0.3);
-      return `
+      const style = `
         position: fixed;
         z-index: ${this.zIndex};
         bottom: 0;
@@ -137,8 +168,8 @@ export default {
         box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.15);
         color: #000;
         overflow: hidden;
-        font-size: ${fontSize}px;
       `;
+      return fontSize ? style + `\nfont-size: ${fontSize}px;` : style;
     },
     buttonWrapStyles: function () {
       return `
@@ -170,12 +201,14 @@ export default {
   },
   methods: {
     click(key, idx) {
-      this.activeButton(idx);
       if (this.pseudoClick) {
-        const l = this.keyArray.length;
-        const pIdx = Math.floor((Math.random() * (l - 1)) + idx + 1) % l;
-        this.activeButton(pIdx);
+        if (!((key == -1 && !this.pseudoClickDeleteKey) || (key == '' && !this.pseudoClickBlankKey))) {
+          const l = this.keyArray.length;
+          const pIdx = Math.floor((Math.random() * (l - 1)) + idx + 1) % l;
+          this.activeButton(pIdx);
+        }
       }
+      this.activeButton(idx);
       let newVal = this.value;
       const encryptedValue = [...this.encryptedValue];
       if (this.encrypt) {
@@ -254,6 +287,7 @@ export default {
       }, this.activeButtonDelay);
     },
     initDefaultStyles(sheet) {
+      if (this.defaultStyle === 'none') return;
       const test = /[^0-9A-z\-_ ]/;
       let padIndex = 0;
       if (this.defaultStyle !== 'button') {

@@ -60,7 +60,7 @@ export  default {
 ### Usage with CDN
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.2.2/dist/vue-numeric-keypad.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.2.3/dist/vue-numeric-keypad.min.js"></script>
 <script>
   Vue.use(VueNumericKeypad);
   new Vue({ ... });
@@ -74,7 +74,7 @@ export  default {
 ```
 ## Demo
 
-https://chae-sumin.github.io/vue-numeric-keypad-demo/
+https://chae-sumin.github.io/vue-numeric-keypad/
 
 ## Props and Options
 
@@ -103,6 +103,8 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
 |`encryptedChar`|Will be placed in `:value.sync` of the original value.<br>For strings of length greater than 1, only the first character is valid.|String|'0'|
 |`activeButtonDelay`|The time when `activeButtonClass` is maintained (ms)|Number|300|
 |`pseudoClick`|Clicking a button triggers a pseudo click on another button|Boolean|false|
+|`pseudoClickDeleteKey`|Clicking the delete button triggers a pseudo click on another button|Boolean|`pseudoClick`|
+|`pseudoClickBlankKey`|Clicking the blank button triggers a pseudo click on another button|Boolean|`pseudoClick`|
 |`defaultStyle`|'all': Use All default styles<br>'button': Use `buttonStyles`, `activeButtonStyles` default styles<br>'wrap': Use `keypadStyles`, `buttonWrapStyles` default styles<br>'none': Not use all default styles|['all', 'button', 'wrap', 'none']|'all'|
 |`stopPropagation`|Prevents the propagation of events that turn off `:show.sync`.|Boolean|true|
 
@@ -139,7 +141,7 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
   box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.15);
   color: #000;
   overflow: hidden;
-  font-size: ${fontSize}px;
+  font-size: ${fontSize}px; // When fontSize != 0
 }
 ```
 `buttonWrapStyles` :
@@ -180,7 +182,8 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
 ```
 
 ## Tip
-
+ - Detect and act on when options are changed. (However, class-related options and `encrypt` are excluded)
+ - When options are changed, if `keyRandomize` is true, the key array is changed randomly.
  - You can bind only one value to one keypad, or you can bind multiple values.
  - You can always keep the value of the show true and adjust the position of the keypad so that the keypad can always be located in a fixed layout.
  - You don't have to always bind the visible value.

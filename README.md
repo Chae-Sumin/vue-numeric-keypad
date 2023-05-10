@@ -84,9 +84,9 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
 |property|Description|Required|type|
 |-|-|-|-|
 |`id`|ID of the keypad.|False|String|
-|`:value.sync`|The value to change when entering the keypad.|True|String variable|
-|`:encryptedValue.sync` \| `:encrypted-value.sync`|Array in which encrypted values will be entered<br>when `options.encrypt: true`.|False|Array variable|
-|`:show.sync`|Bind to the v-show on the keypad. And adjust the font size and randomize the key arrangement.|True|(Boolean \| Number) variable|
+|`:value` \| `:value.sync`|The value to change when entering the keypad.|True|String \| <br> String variable|
+|`:encryptedValue.sync` \| `:encrypted-value.sync`|Array in which encrypted values will be entered<br>when `options.encrypt: true`.|False|Array&lt;string&gt; variable|
+|`:show.sync`|Bind to the v-show on the keypad. And adjust the font size and randomize the key arrangement.|True|Boolean variable \|<br> Number variable |
 |`:encryptFunc` \| `:encrypt-func`|A function that encrypts the input<br>when `options.encrypt: true`.|False|Function|
 |`:options`|Set several values.<br>(details can be found below)|False|Object|
 ### options
@@ -98,16 +98,17 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
 |`zIndex`|Sets the z-index value.<br>Valid when `keypadStyles` is the default.|Number|1|
 |`rows`|Sets the number of rows in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|4|
 |`columns`|Sets the number of columns in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|3|
-|`keyArray`|Can only have an integer 'number' between -1 and 9 and an empty 'string' type.<br>-1 means the delete key|Array|`columns` === 3 ?<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] :<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1]|
+|`keyArray`|Can only have an integer 'number' between -1 and 9 and an empty 'string' type.<br>-1 means the delete key|Array&lt;number\|string&gt;|`columns` === 3 ?<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] :<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1]|
 |`encrypt`|Using encryption|Boolean|false|
 |`encryptedChar`|Will be placed in `:value.sync` of the original value.<br>For strings of length greater than 1, only the first character is valid.|String|'0'|
 |`activeButtonDelay`|The time when `activeButtonClass` is maintained (ms)|Number|300|
 |`pseudoClick`|Clicking a button triggers a pseudo click on another button|Boolean|false|
 |`pseudoClickDeleteKey`|Clicking the delete button triggers a pseudo click on another button|Boolean|`pseudoClick`|
 |`pseudoClickBlankKey`|Clicking the blank button triggers a pseudo click on another button|Boolean|`pseudoClick`|
-|`defaultStyle`|'all': Use All default styles<br>'button': Use `buttonStyles`, `activeButtonStyles` default styles<br>'wrap': Use `keypadStyles`, `buttonWrapStyles` default styles<br>'none': Not use all default styles|['all', 'button', 'wrap', 'none']|'all'|
+|`defaultStyle`|'all': Use All default styles<br>'button': Use `buttonStyles`, `activeButtonStyles` default styles<br>'wrap': Use `keypadStyles`, `buttonWrapStyles` default styles<br>'none': Not use all default styles|'all' \| 'button' \| 'wrap' \| 'none'|'all'|
 |`stopPropagation`|Prevents the propagation of events that turn off `:show.sync`.|Boolean|true|
-|`vibrate`|Using vibrate (Not supported by Safari)|Boolean|true|
+|`vibrate`|Using vibrate ([reference](https://developer.mozilla.org/en-US/docs/Web/API/Vibration_API))|Boolean|true|
+|`vibratePattern`|Vibrate pattern ([reference](https://developer.mozilla.org/en-US/docs/Web/API/Vibration_API))|Number \| <br>Array&lt;number&gt;|true|
 
 > #### class option
 > The class option must meet the following conditions:

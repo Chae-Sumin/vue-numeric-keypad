@@ -107,6 +107,7 @@ export default {
       pseudoClickDeleteKey: this.options.pseudoClickDeleteKey === undefined ? Boolean(this.options.pseudoClick) : Boolean(this.options.pseudoClickDeleteKey),
       pseudoClickBlankKey: this.options.pseudoClickBlankKey === undefined ? Boolean(this.options.pseudoClick) : Boolean(this.options.pseudoClickBlankKey),
       vibrate: Boolean(this.options.vibrate),
+      vibratePattern: this.options.vibratePattern || 200,
       rows: Number(this.options.rows) || 4,
       columns,
       zIndex: Number(this.options.zIndex) || 1,
@@ -140,6 +141,7 @@ export default {
         this.pseudoClickDeleteKey = options.pseudoClickDeleteKey === undefined ? Boolean(options.pseudoClick) : Boolean(options.pseudoClickDeleteKey);
         this.pseudoClickBlankKey = options.pseudoClickBlankKey === undefined ? Boolean(options.pseudoClick) : Boolean(options.pseudoClickBlankKey);
         this.vibrate = Boolean(options.vibrate);
+        this.vibratePattern = this.vibratePattern || 200
         this.rows = Number(options.rows) || 4;
         this.zIndex = Number(options.zIndex) || 1;
         const defaultStyle = ['all', 'button', 'wrap', 'none'].find(s => s === options.defaultStyle) || 'all';
@@ -212,7 +214,7 @@ export default {
         }
       }
       this.activeButton(idx);
-      if (this.vibrate && window.navigator.vibrate) window.navigator.vibrate(200);
+      if (this.vibrate && window.navigator.vibrate) window.navigator.vibrate(this.vibratePattern);
       let newVal = this.value;
       const encryptedValue = [...this.encryptedValue];
       if (this.encrypt) {

@@ -7,7 +7,7 @@
 				<input
 					type="number"
 					:value="demo1.value"
-					@click.stop="demo1.show = true"
+					@click.stop="demo1.show = !(demo2.show = false)"
 					placeholder="Click for test"
 					readonly
 				/>
@@ -46,8 +46,16 @@
 				<label for="stopPropagation">stopPropagation</label>
 			</div>
 			<div class="options" :style="styles.inner">
+				<input type="checkbox" name="vibrate" id="vibrate" v-model="demo1.options.vibrate">&nbsp;
+				<label for="vibrate">vibrate</label>
+			</div>
+			<div class="options" :style="styles.inner">
 				<input type="number" name="activeButtonDelay" id="activeButtonDelay" v-model="demo1.options.activeButtonDelay" style="width: 50px;">&nbsp;
 				<label for="activeButtonDelay">activeButtonDelay</label>
+			</div>
+			<div class="options" :style="styles.inner">
+				<input type="number" name="vibratePattern" id="vibratePattern" v-model="demo1.options.vibratePattern" style="width: 50px;">&nbsp;
+				<label for="vibratePattern">vibratePattern</label>
 			</div>
 		</div>
 		<div class="box" :style="styles.box">
@@ -59,7 +67,7 @@
 				<input
 					type="text"
 					:value="demo2.value"
-					@click.stop="demo2.show = true"
+					@click.stop="demo2.show = !(demo1.show = false)"
 					placeholder="Click for test"
 					readonly
 				/>
@@ -163,7 +171,9 @@ export default {
 					pseudoClickDeleteKey: false,
 					pseudoClickBlankKey: false,
 					stopPropagation: true,
+					vibrate: false,
 					activeButtonDelay: 300,
+					vibratePattern: 200,
 				},
 			},
 			demo2: {

@@ -92,7 +92,7 @@
 	</div>
 </template>
 <script>
-import VueNumericKeypad from "@/vue-numeric-keypad";
+import VueNumericKeypad from "../src/vue-numeric-keypad";
 import JSEncrypt from "jsencrypt";
 
 const pubKey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZppsGrlhwX14a05LraK1hgF7HFz2VTZQWhmHwpbc1S6Ui4nFhJWF7AAtehV+bUdapdBY2WCkcccsB0xR4BfKq6IFzXGfDapF/MKXn3Z0VwLITnhV17G4rQk+KYGKoDrZdyfR3qhrBOu03HLJ3jrCWiHwBahxKbQjnYqv0Lfl5KQIDAQAB';
@@ -104,6 +104,7 @@ const styles = {
 		flexWrap: 'wrap',
 		alignContent: 'flex-start',
 		width: '100%',
+		paddingBottom: '500px',
 		wordBreak: 'break-all',
 	},
 	box: {
@@ -173,6 +174,8 @@ export default {
 				options: {
 					encrypt: true,
 					encryptedChar: '@',
+					pseudoClick: true,
+					vibrate: true,
 				},
 				crypt: new JSEncrypt(),
 				// FOR DEMO

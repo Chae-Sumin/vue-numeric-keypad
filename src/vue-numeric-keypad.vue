@@ -8,6 +8,7 @@
         type="button"
         :class="setClass(val, idx)"
         @click="click(val, idx)"
+        @touchend.prevent="click(val, idx)"
       >
         {{ showKey(val) }}
       </button>
@@ -87,8 +88,8 @@ export default {
   data() {
     const columns = Number(this.options.columns) || 3;
     return {
-      encryptedChar: typeof this.options.encryptedChar === 'string' ? this.options.encryptedChar.substring(0, 1) : "0",
       encrypt: Boolean(this.options.encrypt),
+      encryptedChar: typeof this.options.encryptedChar === 'string' ? this.options.encryptedChar.substring(0, 1) : "0",
       keyArray: this.options.keyArray || (columns === 3 ? arr1 : arr2),
       keyRandomize: Boolean(this.options.keyRandomize === undefined || this.options.keyRandomize),
       randomizeWhenClick: Boolean(this.options.randomizeWhenClick),
@@ -105,6 +106,7 @@ export default {
       pseudoClick: Boolean(this.options.pseudoClick),
       pseudoClickDeleteKey: this.options.pseudoClickDeleteKey === undefined ? Boolean(this.options.pseudoClick) : Boolean(this.options.pseudoClickDeleteKey),
       pseudoClickBlankKey: this.options.pseudoClickBlankKey === undefined ? Boolean(this.options.pseudoClick) : Boolean(this.options.pseudoClickBlankKey),
+      vibrate: Boolean(this.options.vibrate),
       rows: Number(this.options.rows) || 4,
       columns,
       zIndex: Number(this.options.zIndex) || 1,
@@ -137,6 +139,7 @@ export default {
         this.pseudoClick = Boolean(options.pseudoClick);
         this.pseudoClickDeleteKey = options.pseudoClickDeleteKey === undefined ? Boolean(options.pseudoClick) : Boolean(options.pseudoClickDeleteKey);
         this.pseudoClickBlankKey = options.pseudoClickBlankKey === undefined ? Boolean(options.pseudoClick) : Boolean(options.pseudoClickBlankKey);
+        this.vibrate = Boolean(options.vibrate);
         this.rows = Number(options.rows) || 4;
         this.zIndex = Number(options.zIndex) || 1;
         const defaultStyle = ['all', 'button', 'wrap', 'none'].find(s => s === options.defaultStyle) || 'all';
@@ -209,6 +212,7 @@ export default {
         }
       }
       this.activeButton(idx);
+      if (this.vibrate && window.navigator.vibrate) window.navigator.vibrate(200);
       let newVal = this.value;
       const encryptedValue = [...this.encryptedValue];
       if (this.encrypt) {

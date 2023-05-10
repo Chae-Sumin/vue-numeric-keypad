@@ -107,6 +107,7 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
 |`pseudoClickBlankKey`|Clicking the blank button triggers a pseudo click on another button|Boolean|`pseudoClick`|
 |`defaultStyle`|'all': Use All default styles<br>'button': Use `buttonStyles`, `activeButtonStyles` default styles<br>'wrap': Use `keypadStyles`, `buttonWrapStyles` default styles<br>'none': Not use all default styles|['all', 'button', 'wrap', 'none']|'all'|
 |`stopPropagation`|Prevents the propagation of events that turn off `:show.sync`.|Boolean|true|
+|`vibrate`|Using vibrate (Not supported by Safari)|Boolean|true|
 
 > #### class option
 > The class option must meet the following conditions:

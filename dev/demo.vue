@@ -57,6 +57,14 @@
 				<input type="number" name="vibratePattern" id="vibratePattern" v-model="demo1.options.vibratePattern" style="width: 50px;">&nbsp;
 				<label for="vibratePattern">vibratePattern</label>
 			</div>
+			<div class="options" :style="styles.inner">
+				<input type="text" name="deleteKeyText" id="deleteKeyText" v-model="demo1.options.deleteKeyText" style="width: 50px;">&nbsp;
+				<label for="deleteKeyText">deleteKeyText</label>
+			</div>
+			<div class="options" :style="styles.inner">
+				<input type="text" name="clearKeyText" id="clearKeyText" v-model="demo1.options.clearKeyText" style="width: 50px;">&nbsp;
+				<label for="clearKeyText">clearKeyText</label>
+			</div>
 		</div>
 		<div class="box" :style="styles.box">
 			<h2 :style="styles.title">Test Encript</h2>
@@ -174,6 +182,9 @@ export default {
 					vibrate: false,
 					activeButtonDelay: 300,
 					vibratePattern: 200,
+					keyArray: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, -1, -2],
+					deleteKeyText: 'del',
+					clearKeyText: 'clr',
 				},
 			},
 			demo2: {
@@ -186,6 +197,7 @@ export default {
 					encryptedChar: '@',
 					pseudoClick: true,
 					vibrate: true,
+					keyArray: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, -1, -2],
 				},
 				crypt: new JSEncrypt(),
 				// FOR DEMO

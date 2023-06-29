@@ -98,12 +98,14 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
 |`zIndex`|Sets the z-index value.<br>Valid when `keypadStyles` is the default.|Number|1|
 |`rows`|Sets the number of rows in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|4|
 |`columns`|Sets the number of columns in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|3|
-|`keyArray`|Can only have an integer 'number' between -1 and 9 and an empty 'string' type.<br>-1 means the delete key|Array&lt;number\|string&gt;|`columns` === 3 ?<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] :<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1]|
+|`keyArray`|Can only have an integer 'number' between -2 and 9 and an empty 'string' type.<br>-1 means the delete key and -2 means the clear key|Array&lt;number\|string&gt;|`columns` === 3 ?<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, -1] :<br>[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "", -1]|
+|`deleteKeyText`|Delete Button Text|String|'del'|
+|`clearKeyText`|Clear Button Text|String|'clr'|
 |`encrypt`|Using encryption|Boolean|false|
 |`encryptedChar`|Will be placed in `:value.sync` of the original value.<br>For strings of length greater than 1, only the first character is valid.|String|'0'|
 |`activeButtonDelay`|The time when `activeButtonClass` is maintained (ms)|Number|300|
 |`pseudoClick`|Clicking a button triggers a pseudo click on another button|Boolean|false|
-|`pseudoClickDeleteKey`|Clicking the delete button triggers a pseudo click on another button|Boolean|`pseudoClick`|
+|`pseudoClickDeleteKey`|Clicking the delete button and clear button triggers a pseudo click on another button|Boolean|`pseudoClick`|
 |`pseudoClickBlankKey`|Clicking the blank button triggers a pseudo click on another button|Boolean|`pseudoClick`|
 |`defaultStyle`|'all': Use All default styles<br>'button': Use `buttonStyles`, `activeButtonStyles` default styles<br>'wrap': Use `keypadStyles`, `buttonWrapStyles` default styles<br>'none': Not use all default styles|'all' \| 'button' \| 'wrap' \| 'none'|'all'|
 |`stopPropagation`|Prevents the propagation of events that turn off `:show.sync`.|Boolean|true|
@@ -122,6 +124,7 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
 > |`buttonWrapClass`|'numeric-keypad__button-wrap'|
 > |`buttonClass`|'numeric-keypad__button'|
 > |`deleteButtonClass`|'numeric-keypad__button--delete'|
+> |`clearButtonClass`|'numeric-keypad__button--clear'|
 > |`blankButtonClass`|'numeric-keypad__button--blank'|
 > |`activeButtonClass`|'numeric-keypad__button--active'|
 

@@ -7,8 +7,7 @@
         ref="button"
         type="button"
         :class="setClass(val, idx)"
-        @click="click(val, idx)"
-        @touchend.prevent="click(val, idx)"
+        @pointerup="click(val, idx, $event)"
       >
         {{ showKey(val) }}
       </button>
@@ -64,7 +63,7 @@ export default {
         const keyArrayDisable = (value.keyArray || []).some(key => {
           switch (typeof key) {
             case 'number':
-              return (!Number.isInteger(key) || key < -1 || key > 9);
+              return (!Number.isInteger(key) || key < -2 || key > 9);
             case 'string':
               return key;
             default:
@@ -72,7 +71,7 @@ export default {
           }
         });
         if (keyArrayDisable) {
-          console.error("KeyArray can contain only an integer 'number' between -1 and 9 and an empty 'string'.");
+          console.error("KeyArray can contain only an integer 'number' between -2 and 9 and an empty 'string'.");
           return false;
         }
         const classDisable = Object.keys(value).some(key => /Class/.test(key) && /[^0-9A-z\-_ ]/.test(value[key]));
@@ -99,6 +98,7 @@ export default {
       buttonWrapClass: this.options.buttonWrapClass || 'numeric-keypad__button-wrap',
       buttonClass: this.options.buttonClass || 'numeric-keypad__button',
       deleteButtonClass: this.options.deleteButtonClass || 'numeric-keypad__button--delete',
+      clearButtonClass: this.options.clearButtonClass || 'numeric-keypad__button--clear',
       blankButtonClass: this.options.blankButtonClass || 'numeric-keypad__button--blank',
       activeButtonClass: this.options.activeButtonClass || 'numeric-keypad__button--active',
       activeButtonIndexes: {},
@@ -116,6 +116,8 @@ export default {
       defaultStyleSheet: document.createElement('style'),
       defaultStyle: ['all', 'button', 'wrap', 'none'].find(s => s === this.options.defaultStyle) || 'all',
       keypadStylesIndex: null,
+      deleteKeyText: this.options.deleteKeyText === undefined ? 'del' : this.options.deleteKeyText,
+      clearKeyText: this.options.clearKeyText === undefined ? 'clr' : this.options.clearKeyText,
     };
   },
   watch: {
@@ -144,6 +146,8 @@ export default {
         this.vibratePattern = this.vibratePattern || 200
         this.rows = Number(options.rows) || 4;
         this.zIndex = Number(options.zIndex) || 1;
+        this.deleteKeyText = options.deleteKeyText === undefined ? 'del' : options.deleteKeyText;
+        this.clearKeyText = options.clearKeyText === undefined ? 'clr' : options.clearKeyText;
         const defaultStyle = ['all', 'button', 'wrap', 'none'].find(s => s === options.defaultStyle) || 'all';
         if (this.defaultStyle !== defaultStyle) {
           this.defaultStyle = defaultStyle;
@@ -205,9 +209,10 @@ export default {
     }
   },
   methods: {
-    click(key, idx) {
+    click(key, idx, event) {
+      if (!event.isTrusted) return;
       if (this.pseudoClick) {
-        if (!((key == -1 && !this.pseudoClickDeleteKey) || (key == '' && !this.pseudoClickBlankKey))) {
+        if (!(((key == -1 || key == -2) && !this.pseudoClickDeleteKey) || (key == '' && !this.pseudoClickBlankKey))) {
           const l = this.keyArray.length;
           const pIdx = Math.floor((Math.random() * (l - 1)) + idx + 1) % l;
           this.activeButton(pIdx);
@@ -215,34 +220,57 @@ export default {
       }
       this.activeButton(idx);
       if (this.vibrate && window.navigator.vibrate) window.navigator.vibrate(this.vibratePattern);
-      let newVal = this.value;
+      switch (key) {
+        case -1:
+          this.del();
+          break;
+        case -2:
+          this.clear();
+        case "":
+          break;
+        default:
+          this.add(key);
+          break;
+      }
+      if (this.keyRandomize && this.randomizeWhenClick) this.randomize();
+    },
+    del() {
       const encryptedValue = [...this.encryptedValue];
+      const newVal = this.value.slice(0, -1);
+      this.$emit("update:value", String(newVal));
       if (this.encrypt) {
-        if (key === -1) {
-          newVal = this.value.slice(0, -1);
-          encryptedValue.pop();
-        } else if (key !== '') {
-          newVal += this.encryptedChar;
-          encryptedValue.push(this.encryptFunc(key.toString()));
-        }
+        encryptedValue.pop();
+        this.$emit("update:encryptedValue", encryptedValue);
+      }
+    },
+    clear() {
+      this.$emit("update:value", '');
+      if (this.encrypt) this.$emit("update:encryptedValue", []);
+    },
+    add(key) {
+      const encryptedValue = [...this.encryptedValue];
+      let newVal = this.value;
+      if (this.encrypt) {
+        newVal += this.encryptedChar;
+        encryptedValue.push(this.encryptFunc(key.toString()));
+        this.$emit("update:encryptedValue", encryptedValue);
       } else {
-        if (key === -1) {
-          newVal = this.value.slice(0, -1);
-        } else {
-          newVal += key;
-        }
+        newVal += key;
       }
       this.$emit("update:value", String(newVal));
-      this.$emit("update:encryptedValue", encryptedValue);
-      if (this.keyRandomize && this.randomizeWhenClick) this.randomize();
     },
     randomize() {
       let newkeyArray = [];
       let delKeyCnt = 0;
+      let clearKeyCnt = 0;
       for (let i = 0; i < this.keyArray.length; i++) {
         let r = Math.random();
         if (this.fixDeleteKey && this.keyArray[i] == -1) {
           delKeyCnt++;
+          continue;
+        }
+        if (this.fixDeleteKey && this.keyArray[i] == -2) {
+          clearKeyCnt++;
           continue;
         }
         if (r < 0.5) newkeyArray.push(this.keyArray[i]);
@@ -251,11 +279,16 @@ export default {
       if (delKeyCnt) {
         for (let i = 0; i < delKeyCnt; i++) newkeyArray.push(-1);
       };
+      if (clearKeyCnt) {
+        for (let i = 0; i < clearKeyCnt; i++) newkeyArray.push(-2);
+      };
       this.keyArray = newkeyArray;
     },
     showKey(key) {
       if (key === -1) {
-        return "del";
+        return this.deleteKeyText;
+      } else if (key === -2) {
+        return this.clearKeyText;
       } else return key;
     },
     resize() {
@@ -271,6 +304,9 @@ export default {
       const classArr = [this.buttonClass];
       if (key === -1) {
         classArr.push(this.deleteButtonClass);
+      }
+      if (key === -2) {
+        classArr.push(this.clearButtonClass);
       }
       if (key === '') {
         classArr.push(this.blankButtonClass);

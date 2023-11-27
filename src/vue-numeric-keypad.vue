@@ -93,6 +93,7 @@ export default {
       keyRandomize: Boolean(this.options.keyRandomize === undefined || this.options.keyRandomize),
       randomizeWhenClick: Boolean(this.options.randomizeWhenClick),
       fixDeleteKey: Boolean(this.options.fixDeleteKey === undefined || this.options.fixDeleteKey),
+      fixBlankKey: Boolean(this.options.fixBlankKey === undefined || this.options.fixBlankKey),
       stopPropagation: Boolean(this.options.stopPropagation === undefined || this.options.stopPropagation),
       keypadClass: this.options.keypadClass || 'numeric-keypad',
       buttonWrapClass: this.options.buttonWrapClass || 'numeric-keypad__button-wrap',
@@ -137,6 +138,7 @@ export default {
         this.keyRandomize = Boolean(options.keyRandomize === undefined || options.keyRandomize);
         this.randomizeWhenClick = Boolean(options.randomizeWhenClick);
         this.fixDeleteKey = Boolean(options.fixDeleteKey === undefined || options.fixDeleteKey);
+        this.fixBlankKey = Boolean(options.fixBlankKey === undefined || options.fixBlankKey);
         this.stopPropagation = Boolean(options.stopPropagation === undefined || options.stopPropagation);
         this.activeButtonDelay = Number(options.activeButtonDelay) || 300;
         this.pseudoClick = Boolean(options.pseudoClick);
@@ -260,29 +262,30 @@ export default {
       this.$emit("update:value", String(newVal));
     },
     randomize() {
-      let newkeyArray = [];
-      let delKeyCnt = 0;
-      let clearKeyCnt = 0;
-      for (let i = 0; i < this.keyArray.length; i++) {
-        let r = Math.random();
-        if (this.fixDeleteKey && this.keyArray[i] == -1) {
-          delKeyCnt++;
-          continue;
+      const l = this.keyArray.length;
+      const newkeyArray = [...this.keyArray];
+      for (let i = 0; i < l; i++) {
+        const key = newkeyArray[i];
+        if (this.checkFix(key)) continue;
+
+        let r = Math.floor(Math.random() * l);
+        if (r == i) r = (r + 1) % l;
+        let count = 0;
+        while ((this.checkFix(newkeyArray[r]) || newkeyArray[r] === newkeyArray[i]) && count < l) {
+          r = (r + 1) % l;
+          count++;
         }
-        if (this.fixDeleteKey && this.keyArray[i] == -2) {
-          clearKeyCnt++;
-          continue;
-        }
-        if (r < 0.5) newkeyArray.push(this.keyArray[i]);
-        else newkeyArray.unshift(this.keyArray[i]);
+        if (count >= l) continue;
+        newkeyArray[i] = newkeyArray[r];
+        newkeyArray[r] = key;
       }
-      if (delKeyCnt) {
-        for (let i = 0; i < delKeyCnt; i++) newkeyArray.push(-1);
-      };
-      if (clearKeyCnt) {
-        for (let i = 0; i < clearKeyCnt; i++) newkeyArray.push(-2);
-      };
       this.keyArray = newkeyArray;
+    },
+    checkFix(key) {
+      if (key === '' && this.fixBlankKey) return true;
+      if (key === -1 && this.fixDeleteKey) return true;
+      if (key === -2 && this.fixDeleteKey) return true;
+      return false;
     },
     showKey(key) {
       if (key === -1) {

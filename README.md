@@ -94,7 +94,8 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
 |-|-|-|-|
 |`keyRandomize`|Randomize the key array whenever the `show` prop changes.|Boolean|true|
 |`randomizeWhenClick`|If the value is true and `keyRandomize` is true, randomize the key array whenever you press the key.|Boolean|false|
-|`fixDeleteKey`|The delete key is fixed at the end when the key array is randomized.|Boolean|true|
+|`fixDeleteKey`|The delete key is fixed when the key array is randomized.|Boolean|true|
+|`fixBlankKey`|The Blank key is fixed when the key array is randomized.|Boolean|true|
 |`zIndex`|Sets the z-index value.<br>Valid when `keypadStyles` is the default.|Number|1|
 |`rows`|Sets the number of rows in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|4|
 |`columns`|Sets the number of columns in the key array.<br>Valid when `buttonWrapStyles` is the default.|Number|3|

@@ -17,6 +17,7 @@
 					:options="demo1.options"
 				/>
 			</div>
+			<br>
 			<div class="options" :style="styles.inner">
 				<input type="checkbox" name="keyRandomize" id="keyRandomize" v-model="demo1.options.keyRandomize">&nbsp;
 				<label for="keyRandomize">keyRandomize</label>
@@ -28,6 +29,10 @@
 			<div class="options" :style="styles.inner">
 				<input type="checkbox" name="fixDeleteKey" id="fixDeleteKey" v-model="demo1.options.fixDeleteKey">&nbsp;
 				<label for="fixDeleteKey">fixDeleteKey</label>
+			</div>
+			<div class="options" :style="styles.inner">
+				<input type="checkbox" name="fixBlankKey" id="fixBlankKey" v-model="demo1.options.fixBlankKey">&nbsp;
+				<label for="fixBlankKey">fixBlankKey</label>
 			</div>
 			<div class="options" :style="styles.inner">
 				<input type="checkbox" name="pseudoClick" id="pseudoClick" v-model="demo1.options.pseudoClick">&nbsp;
@@ -49,6 +54,20 @@
 				<input type="checkbox" name="vibrate" id="vibrate" v-model="demo1.options.vibrate">&nbsp;
 				<label for="vibrate">vibrate</label>
 			</div>
+			<br>
+			<div class="options" :style="styles.inner">
+				<input type="radio" name="keyArray" id="keyArray1" v-model="demo1.options.keyArray" :value="keyArray1" checked>&nbsp;
+				<label for="keyArray1">keyArray1: {{ keyArray1 }}</label>
+			</div>
+			<div class="options" :style="styles.inner">
+				<input type="radio" name="keyArray" id="keyArray2" v-model="demo1.options.keyArray" :value="keyArray2">&nbsp;
+				<label for="keyArray2">keyArray2: {{ keyArray2 }}</label>
+			</div>
+			<div class="options" :style="styles.inner">
+				<input type="radio" name="keyArray" id="keyArray3" v-model="demo1.options.keyArray" :value="keyArray3">&nbsp;
+				<label for="keyArray3">keyArray3: {{ keyArray3 }}</label>
+			</div>
+			<br>
 			<div class="options" :style="styles.inner">
 				<input type="number" name="activeButtonDelay" id="activeButtonDelay" v-model="demo1.options.activeButtonDelay" style="width: 50px;">&nbsp;
 				<label for="activeButtonDelay">activeButtonDelay</label>
@@ -88,7 +107,7 @@
 				/>
 			</div>
 			<div :style="styles.inner">
-				<div v-for="(v, i) in demo2.encryptedValue">{{i + 1}}: <input :value="v" readonly @click="e => copyText(e)" :style="styles.encInput">&ensp;<span class="copy">&lt;- Click for copy</span></div>
+				<div v-for="(v, i) in demo2.encryptedValue" :key="i">{{i + 1}}: <input :value="v" readonly @click="e => copyText(e)" :style="styles.encInput">&ensp;<span class="copy">&lt;- Click for copy</span></div>
 			</div>
 			<div :style="styles.inner">
 				<h3 :style="styles.subtitle">Example public key&ensp;<a href="javascript:;" @click="demo2.toggle1 = !demo2.toggle1" :style="styles.button">{{demo2.toggle1 ? 'hide' : 'show'}}</a></h3>
@@ -175,6 +194,7 @@ export default {
 					keyRandomize: true,
 					randomizeWhenClick: false,
 					fixDeleteKey: true,
+					fixBlankKey: true,
 					pseudoClick: false,
 					pseudoClickDeleteKey: false,
 					pseudoClickBlankKey: false,
@@ -182,11 +202,14 @@ export default {
 					vibrate: false,
 					activeButtonDelay: 300,
 					vibratePattern: 200,
-					keyArray: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, -1, -2],
+					keyArray: [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, -1],
 					deleteKeyText: 'del',
 					clearKeyText: 'clr',
 				},
 			},
+			keyArray1: [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, -1],
+			keyArray2: [1, 2, 3, 4, 5, 6, 7, 8, 9, -1, 0, -2],
+			keyArray3: [-1, -1, -1, -2, -2, -2, '', '', '', 0, 0, 0],
 			demo2: {
 				value: "",
 				show: 0,
